@@ -45,35 +45,37 @@ class Hedgehog(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.teleport()
+        self.speed_x = 0
+        self.speed_y = 0
 
     def teleport(self):
         self.rect.left = (Settings.window_width / 2)
         self.rect.top = Settings.window_height - Settings.border_size
 
     def update(self):
-        pass
+        self.move_ip()
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
     def change_left(self):
-        self.rect.left -= self.hedgehog_speed
+        self.speed_x -= Settings.hedgehog_speed
 
     def change_right(self):
-        self.rect.left += self.hedgehog_speed
+        self.speed_x += Settings.hedgehog_speed
 
     def change_top(self):
-        self.rect.top -= self.hedgehog_speed
+        self.speed_y -= Settings.hedgehog_speed
 
     def change_down(self):
-        self.rect.top += self.hedgehog_speed
+        self.speed_y += Settings.hedgehog_speed
 
     def stop(self):
-        self.hedgehog_speed = 0
-
-    def start(self):
-        self.hedgehog_speed = Settings.hedgehog_speed
-
+        self.speed_x = 0
+        self.speed_y = 0
+    
+    def move_ip(self):
+        pygame.Rect.move_ip(self.rect, self.speed_x, self.speed_y)
 
 class Chestnut(pygame.sprite.Sprite):
     def __init__(self, filename):
@@ -126,17 +128,13 @@ class Game(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
-                elif event.key == pygame.K_a:
-                    self.hedgehog.start()
+                if event.key == pygame.K_a:
                     self.hedgehog.change_left()
-                elif event.key == pygame.K_w:
-                    self.hedgehog.start()
+                if event.key == pygame.K_w:
                     self.hedgehog.change_top()
-                elif event.key == pygame.K_s:
-                    self.hedgehog.start()
+                if event.key == pygame.K_s:
                     self.hedgehog.change_down()
-                elif event.key == pygame.K_d:
-                    self.hedgehog.start()
+                if event.key == pygame.K_d:
                     self.hedgehog.change_right()
             if event.type == pygame.KEYUP:
                 if event.key == K_a or event.key == K_w or event.key == K_d or event.key == K_s:
@@ -153,6 +151,7 @@ class Game(object):
             self.chestnut.add(Chestnut("chestnut.png"))
             self.counter = 0
         self.chestnut.update()
+        self.hedgehog.update()
 
     def draw(self):
         self.background.draw(self.screen)
