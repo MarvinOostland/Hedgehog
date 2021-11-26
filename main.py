@@ -90,10 +90,12 @@ class Chestnut(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.top += self.speed
+        if self.rect.bottom >= Settings.window_height:
+            game.chestnut.remove(self)
+            game.points += 1
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-
 
 class Game(object):
     def __init__(self):
@@ -108,7 +110,10 @@ class Game(object):
         self.chestnut = pygame.sprite.Group()
         self.counter = 0
         self.lives = 3
+        self.points = 0
         self.running = True
+        pygame.font.init()
+        self.font_normalsize = pygame.font.Font(pygame.font.get_default_font(), 16)
 
     def run(self):
         while self.running:
@@ -147,7 +152,6 @@ class Game(object):
             self.lives -= 1
             if self.lives <= 0:
                 self.running = False
-
         self.counter += 1
         if self.counter >= 50:  # Begrenzung der Anzahl der Chestnuts die sich gleichzeitg auf dem Bildschirm befinden
             self.chestnut.add(Chestnut("chestnut.png"))
@@ -159,6 +163,8 @@ class Game(object):
         self.background.draw(self.screen)
         self.hedgehog.draw(self.screen)
         self.chestnut.draw(self.screen)
+        text = self.font_normalsize.render(f"Points: {self.points}", False, (255,255,255))
+        self.screen.blit(text, (0, 10))
         pygame.display.flip()
 
 
