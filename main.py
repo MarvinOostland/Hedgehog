@@ -12,7 +12,7 @@ class Settings(object):
     path_file = os.path.dirname(os.path.abspath(__file__))
     path_image = os.path.join(path_file, "images")
     hedgehog_size = (100, 100)
-    hedgehog_speed = 25
+    hedgehog_speed = 10
     chestnut_size = (50, 50)
     heart_size = (50, 50)
     border_size = 70
@@ -31,9 +31,6 @@ class Background(object):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def update(self):
-        pass
-
 
 class Hedgehog(pygame.sprite.Sprite):
     def __init__(self, filename) -> None:
@@ -48,15 +45,16 @@ class Hedgehog(pygame.sprite.Sprite):
         self.speed_x = 0
         self.speed_y = 0
 
-    def teleport(self):
+    def teleport(self):  # Teleportiert den Spieler bei einer Kollsion wieder an den unteren Bildschirmrand
         self.rect.left = (Settings.window_width / 2)
         self.rect.top = Settings.window_height - Settings.border_size
 
-    def update(self):
+    def update(self):  # Update für die Steuerung
         self.move_ip()
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+    # Bewegungen des Spielers
 
     def change_left(self):
         self.speed_x -= Settings.hedgehog_speed
@@ -147,10 +145,11 @@ class Game(object):
         if pygame.sprite.spritecollide(self.hedgehog, self.chestnut, True, False):
             self.reset()
             self.lives -= 1
-        if self.lives <= 0:
-            self.running = False
+            if self.lives <= 0:
+                self.running = False
+
         self.counter += 1
-        if self.counter >= 50:
+        if self.counter >= 50:  # Begrenzung der Anzahl der Chestnuts die sich gleichzeitg auf dem Bildschirm befinden
             self.chestnut.add(Chestnut("chestnut.png"))
             self.counter = 0
         self.chestnut.update()
