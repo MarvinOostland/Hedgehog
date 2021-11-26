@@ -73,9 +73,10 @@ class Hedgehog(pygame.sprite.Sprite):
     def stop(self):
         self.speed_x = 0
         self.speed_y = 0
-    
+
     def move_ip(self):
         pygame.Rect.move_ip(self.rect, self.speed_x, self.speed_y)
+
 
 class Chestnut(pygame.sprite.Sprite):
     def __init__(self, filename):
@@ -146,6 +147,8 @@ class Game(object):
         if pygame.sprite.spritecollide(self.hedgehog, self.chestnut, True, False):
             self.reset()
             self.lives -= 1
+        if self.lives <= 0:
+            self.running = False
         self.counter += 1
         if self.counter >= 50:
             self.chestnut.add(Chestnut("chestnut.png"))
